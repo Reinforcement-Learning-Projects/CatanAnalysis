@@ -13,3 +13,48 @@ Some questions to answer:
 
 In the least, I hope to make the program represent the boardgame as closely as possible (some aspects will be very difficult and probably will be ignored) and allow for 3 to 4 players to play by their own set of algorithmic strategies.
 
+
+## So far
+It generates random boards and prints them
+
+^ are vacant positions
+
+Resource and number are paired together at hex center  
+B: Brick  
+G: Grain  
+O: Ore  
+S: Sheep (a.k.a. wool)  
+W: Wood (a.k.a lumber)  
+
+3,g,s,w,b,o are harbors
+
+Sample Board:  
+```
+                   ^          3^           ^
+             ^          3^           ^           ^
+
+                  11O         04G         10O
+
+            b^           ^           ^          o^
+      b^           ^           ^           ^          o^
+
+            11B         03W         06G         03B
+
+       ^           ^           ^           ^           ^
+3^           ^           ^           ^           ^           ^
+
+      08W         08S         04B         06G         09S
+
+3^           ^           ^           ^           ^           ^
+      s^           ^           ^           ^          w^
+
+            05W         12G         05W         10S
+
+      s^           ^           ^           ^          w^
+             ^           ^           ^           ^
+
+                  09S          D          02O
+
+            3^          g^           ^          3^
+                  3^          g^          3^
+```                 
