@@ -20,7 +20,7 @@ It generates random boards and prints them
 ^ are vacant positions
 
 Resource and number are paired together at hex center  
-D: Desert
+D: Desert  
 B: Brick  
 G: Grain  
 O: Ore  

@@ -3,7 +3,9 @@
 import sys
 import argparse
 
-sys.path.insert(0, 'scripts')
+sys.path.insert( 0, 'scripts' )
+sys.path.insert( 0, 'scripts/Strategies' )
+
 from Catan import Catan
 
 def parseArgs( args ):

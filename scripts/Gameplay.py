@@ -1,9 +1,11 @@
 
 from Player import Player
+from Phases import Phases
 
 # Manages the gameplay: rules and turns
 class Gameplay:
     Board = None
+    Phases = None
     players = []
 
     def __init__( self, Board, numOfPlayers ):
@@ -23,7 +25,4 @@ class Gameplay:
         self.players.append( Player( id ) )
     
     def begin( self ):
-        self.__setUpPhase()
-
-    def __setUpPhase( self ):
-        print( 'Players choosing starting positions...' )
+        self.Phases = Phases( self.players, self.Board )

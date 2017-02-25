@@ -6,6 +6,7 @@ class Position:
     harbor = " "
     adjPos = []
     owner = "^"
+    playerId = None
     isCity = False
     def __init__( self, hexes ):
         self.hexes = hexes
