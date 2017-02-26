@@ -15,23 +15,23 @@ In the least, I hope to make the program represent the boardgame as closely as p
 
 ## Running It
 ```python main.py [-v]```  
-[-h] - help
-[-v] - verbose
+[-h] - help  
+[-v] - verbose  
 
 ## So far
-It generates random boards with harbors and without adjacent 6's and 8's.
-Has 3 to 4 players randomly place their initial settlements with respect to the distance rule.
-Dice are rolled and player recieve their appropriate cards.
+* It generates random boards with harbors and without adjacent 6's and 8's.  
+* Has 3 to 4 players randomly place their initial settlements with respect to the distance rule.  
+* Dice are rolled and player recieve their appropriate cards.  
 
 ^ are vacant positions
 
 Resource and number are paired together at hex center  
-D: Desert  
-B: Brick  
-G: Grain  
-O: Ore  
-S: Sheep (a.k.a. wool)  
-W: Wood (a.k.a lumber)  
+* D: Desert  
+* B: Brick  
+* G: Grain  
+* O: Ore  
+* S: Sheep (a.k.a. wool)  
+* W: Wood (a.k.a lumber)  
 
 3,g,s,w,b,o are harbors
 
