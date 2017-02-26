@@ -13,9 +13,15 @@ Some questions to answer:
 
 In the least, I hope to make the program represent the boardgame as closely as possible (some aspects will be very difficult and probably will be ignored) and allow for 3 to 4 players to play by their own set of algorithmic strategies.
 
+## Running It
+```python main.py [-v]```  
+[-h] - help
+[-v] - verbose
 
 ## So far
-It generates random boards and prints them
+It generates random boards with harbors and without adjacent 6's and 8's.
+Has 3 to 4 players randomly place their initial settlements with respect to the distance rule.
+Dice are rolled and player recieve their appropriate cards.
 
 ^ are vacant positions
 

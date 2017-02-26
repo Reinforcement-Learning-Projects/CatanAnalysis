@@ -5,7 +5,6 @@ class Catan:
     board = None
     gameplay = None
 
-    def __init__( self, attributes ): 
+    def __init__( self ):
         self.board = Board()
-        self.board.drawIt()
         self.gameplay = Gameplay( self.board, 4 )

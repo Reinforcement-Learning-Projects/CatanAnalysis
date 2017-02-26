@@ -1,3 +1,5 @@
+from settings import printv
+
 from random import randint
 from random import shuffle
 
@@ -12,19 +14,20 @@ class Board:
                 'sheep', 'sheep', 'sheep', 'sheep',
                 'wood', 'wood', 'wood', 'wood',
                 'brick', 'brick', 'brick',
-                'ore', 'ore', 'ore',
-                'desert' ]
-    shuffle( resources )
-    numbers = [ 2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 8, 9, 9, 10, 10, 11, 11, 12 ]
-    shuffle( numbers )
-
-    hexes = []
-    positions = []
+                'ore', 'ore', 'ore' ]
+                # 'desert' ] desert is added specially later
+    numbers = None
+    hexes = None
+    positions = None
 
     def __init__( self ):
+        shuffle( self.resources )
+        self.numbers = self.__makeHexNumbers()
+
         self.hexes = self.__makeHexes()
         self.positions = self.__makePositions( self.hexes )
         self.__addHarbors()
+        self.__connectPositions()
 
     # The order of the hexes list signifies the placement of the hexes too:
     # With a flat side facing you: 0 = top left and 18 bottom right (much like reading)
@@ -32,13 +35,12 @@ class Board:
     def __makeHexes( self ):
         hexes = [];
         # for each tile spot
-        for h in xrange( 0, len( self.resources ) ):
-            resource = self.resources.pop()
-
-            if resource == 'desert':
-                number = 7
+        for h in xrange( 0, len( self.numbers ) ):
+            number = self.numbers.pop()
+            if number is 7:
+                resource = 'desert'
             else:
-                number = self.numbers.pop()
+                resource = self.resources.pop()  
 
             # and finally make the hex
             hex = Hex( resource, number )
@@ -46,6 +48,62 @@ class Board:
 
         return hexes
 
+    # returns a valid number arrangement (no 6's or 8's touching other 6's or 8's) 
+    def __makeHexNumbers( self ):
+        numbers = [ 2, 3, 3, 4, 4, 5, 5, 6, 6, 8, 7, 8, 9, 9, 10, 10, 11, 11, 12 ]
+
+        def test68( v ):
+                return (numbers[v] is 6) or (numbers[v] is 8)
+        def testNumbers():
+            invalid = False
+            if test68(0):
+                invalid = test68(1) or test68(3) or test68(4) or invalid
+            if test68(1):
+                invalid = test68(0) or test68(2) or test68(4) or test68(5) or invalid
+            if test68(2):
+                invalid = test68(1) or test68(5) or test68(6) or invalid
+            if test68(3):
+                invalid = test68(0) or test68(4) or test68(7) or test68(8) or invalid
+            if test68(4):
+                invalid = test68(0) or test68(1) or test68(3) or test68(5) or test68(8) or test68(9) or invalid
+            if test68(5):
+                invalid = test68(1) or test68(2) or test68(4) or test68(6) or test68(9) or test68(10) or invalid
+            if test68(6):
+                invalid = test68(2) or test68(5) or test68(10) or test68(11) or invalid
+            if test68(7):
+                invalid = test68(3) or test68(8) or test68(12) or invalid
+            if test68(8):
+                invalid = test68(3) or test68(4) or test68(7) or test68(9) or test68(12) or test68(13) or invalid
+            if test68(9):
+                invalid = test68(4) or test68(5) or test68(8) or test68(10) or test68(13) or test68(14) or invalid
+            if test68(10):
+                invalid = test68(5) or test68(6) or test68(9) or test68(11) or test68(14) or test68(15) or invalid
+            if test68(11):
+                invalid = test68(6) or test68(10) or test68(15) or invalid
+            if test68(12):
+                invalid = test68(7) or test68(8) or test68(13) or test68(16) or invalid
+            if test68(13):
+                invalid = test68(8) or test68(9) or test68(12) or test68(14) or test68(16) or test68(17) or invalid
+            if test68(14):
+                invalid = test68(9) or test68(10) or test68(13) or test68(15) or test68(17) or test68(18) or invalid
+            if test68(15):
+                invalid = test68(10) or test68(11) or test68(14) or test68(18) or invalid
+            if test68(16):
+                invalid = test68(12) or test68(13) or test68(17) or invalid
+            if test68(17):
+                invalid = test68(13) or test68(14) or test68(16) or test68(18) or invalid
+            if test68(18):
+                invalid = test68(14) or test68(15) or test68(17) or invalid
+
+            return invalid
+        
+        invalid = True
+        while invalid:
+            shuffle( numbers )
+            invalid = testNumbers()
+
+        return numbers
+                
     # Now imagine; actually let me make an ascii board... nevermind/maybe later.
     # Now imagine the setup described above makehexes. This time make mental horizontal cuts
     # though the center of the hexes of the board. You should have 5 cuts (1 for each row).
@@ -153,6 +211,65 @@ class Board:
             for h in xrange( 0, len(piece) ):
                 for i in possiblePos[len(piece) - 1][p][h]:
                     self.positions[i].setHarbor( piece[h] ) 
+    
+    # Now say which positions are connected to which
+    def __connectPositions( self ):
+        self.positions[0].setAdjPos( [ self.positions[2], self.positions[8] ] )
+        self.positions[1].setAdjPos( [ self.positions[0], self.positions[2] ] )
+        self.positions[2].setAdjPos( [ self.positions[1], self.positions[3], self.positions[9] ] )
+        self.positions[3].setAdjPos( [ self.positions[2], self.positions[4] ] )
+        self.positions[4].setAdjPos( [ self.positions[3], self.positions[5], self.positions[12] ] )
+        self.positions[5].setAdjPos( [ self.positions[4], self.positions[6] ] )
+        self.positions[6].setAdjPos( [ self.positions[5], self.positions[14] ] )
+        self.positions[7].setAdjPos( [ self.positions[8], self.positions[17] ] )
+        self.positions[8].setAdjPos( [ self.positions[0], self.positions[7], self.positions[9] ] )
+        self.positions[9].setAdjPos( [ self.positions[8], self.positions[10], self.positions[19] ] )
+        self.positions[10].setAdjPos([ self.positions[2], self.positions[9], self.positions[11] ] )
+        self.positions[11].setAdjPos([ self.positions[10], self.positions[12], self.positions[21] ] )
+        self.positions[12].setAdjPos([ self.positions[4], self.positions[11], self.positions[13] ] )
+        self.positions[13].setAdjPos([ self.positions[12], self.positions[14], self.positions[23] ] )
+        self.positions[14].setAdjPos([ self.positions[6], self.positions[13], self.positions[15] ] )
+        self.positions[15].setAdjPos([ self.positions[14], self.positions[25] ] )
+        self.positions[16].setAdjPos([ self.positions[17], self.positions[27] ] )
+        self.positions[17].setAdjPos([ self.positions[7], self.positions[16], self.positions[18] ] )
+        self.positions[18].setAdjPos([ self.positions[17], self.positions[19], self.positions[29] ] )
+        self.positions[19].setAdjPos([ self.positions[9], self.positions[18], self.positions[20] ] )
+        self.positions[20].setAdjPos([ self.positions[19], self.positions[21], self.positions[31] ] )
+        self.positions[21].setAdjPos([ self.positions[11], self.positions[20], self.positions[22] ] )
+        self.positions[22].setAdjPos([ self.positions[21], self.positions[23], self.positions[33] ] )
+        self.positions[23].setAdjPos([ self.positions[13], self.positions[22], self.positions[24] ] )
+        self.positions[24].setAdjPos([ self.positions[23], self.positions[25], self.positions[35] ] )
+        self.positions[25].setAdjPos([ self.positions[15], self.positions[24], self.positions[26] ] )
+        self.positions[26].setAdjPos([ self.positions[25], self.positions[37] ] )
+        self.positions[27].setAdjPos([ self.positions[16], self.positions[28] ] )
+        self.positions[28].setAdjPos([ self.positions[27], self.positions[29], self.positions[38] ] )
+        self.positions[29].setAdjPos([ self.positions[18], self.positions[28], self.positions[30] ] )
+        self.positions[30].setAdjPos([ self.positions[29], self.positions[31], self.positions[40] ] )
+        self.positions[31].setAdjPos([ self.positions[20], self.positions[30], self.positions[32] ] )
+        self.positions[32].setAdjPos([ self.positions[31], self.positions[33], self.positions[42] ] )
+        self.positions[33].setAdjPos([ self.positions[22], self.positions[32], self.positions[34] ] )
+        self.positions[34].setAdjPos([ self.positions[33], self.positions[35], self.positions[44] ] )
+        self.positions[35].setAdjPos([ self.positions[24], self.positions[34], self.positions[36] ] )
+        self.positions[36].setAdjPos([ self.positions[35], self.positions[37], self.positions[46] ] )
+        self.positions[37].setAdjPos([ self.positions[26], self.positions[36] ] )
+        self.positions[38].setAdjPos([ self.positions[28], self.positions[39] ] )
+        self.positions[39].setAdjPos([ self.positions[38], self.positions[40], self.positions[47] ] )
+        self.positions[40].setAdjPos([ self.positions[30], self.positions[39], self.positions[41] ] )
+        self.positions[41].setAdjPos([ self.positions[40], self.positions[42], self.positions[49] ] )
+        self.positions[42].setAdjPos([ self.positions[32], self.positions[41], self.positions[43] ] )
+        self.positions[43].setAdjPos([ self.positions[42], self.positions[44], self.positions[51] ] )
+        self.positions[44].setAdjPos([ self.positions[34], self.positions[43], self.positions[45] ] )
+        self.positions[45].setAdjPos([ self.positions[44], self.positions[46], self.positions[53] ] )
+        self.positions[46].setAdjPos([ self.positions[36], self.positions[45] ] )
+        self.positions[47].setAdjPos([ self.positions[39], self.positions[48] ] )
+        self.positions[48].setAdjPos([ self.positions[47], self.positions[49] ] )
+        self.positions[49].setAdjPos([ self.positions[41], self.positions[48], self.positions[50] ] )
+        self.positions[50].setAdjPos([ self.positions[49], self.positions[51] ] )
+        self.positions[51].setAdjPos([ self.positions[43], self.positions[50], self.positions[52] ] )
+        self.positions[52].setAdjPos([ self.positions[51], self.positions[53] ] )
+        self.positions[53].setAdjPos([ self.positions[45], self.positions[52] ] )
+
+        
 
     # prints the current board to the console
     def drawIt( self ):
@@ -165,32 +282,32 @@ class Board:
             p.append( pos.asString() )
         # Note: intermediate whitespace is ignored in strong modulo operation
         # and is their the maintain the same lengths
-        print( "" ) 
-        print( "                  % s         % s         % s                  " % (p[1],p[3],p[5]) )
-        print( "            % s         % s         % s         % s            " % (p[0],p[2],p[4],p[6]) )
-        print( "                                                               " )
-        print( "                  % s         % s         % s                  " % (h[0],h[1],h[2]) )
-        print( "                                                               " )
-        print( "            % s         % s         % s         % s            " % (p[8],p[10],p[12],p[14]) )
-        print( "      % s         % s         % s         % s         % s      " % (p[7],p[9],p[11],p[13],p[15]) )
-        print( "                                                               " )
-        print( "            % s         % s         % s         % s            " % (h[3],h[4],h[5],h[6]) )
-        print( "                                                               " )
-        print( "      % s         % s         % s         % s         % s      " % (p[17],p[19],p[21],p[23],p[25]) )
-        print( "% s         % s         % s         % s         % s         % s" % (p[16],p[18],p[20],p[22],p[24],p[26]) )
-        print( "                                                               " )
-        print( "      % s         % s         % s         % s         % s      " % (h[7],h[8],h[9],h[10],h[11]) )
-        print( "                                                               " )
-        print( "% s         % s         % s         % s         % s         % s" % (p[27],p[29],p[31],p[33],p[35],p[37]) )
-        print( "      % s         % s         % s         % s         % s      " % (p[28],p[30],p[32],p[34],p[36]) )
-        print( "                                                               " )
-        print( "            % s         % s         % s         % s            " % (h[12],h[13],h[14],h[15]) )
-        print( "                                                               " )
-        print( "      % s         % s         % s         % s         % s      " % (p[38],p[40],p[42],p[44],p[46]) )
-        print( "            % s         % s         % s         % s            " % (p[39],p[41],p[43],p[45]) )
-        print( "                                                               " )
-        print( "                  % s         % s         % s                  " % (h[16],h[17],h[18]) )
-        print( "                                                               " )
-        print( "            % s         % s         % s         % s            " % (p[47],p[49],p[51],p[53]) )
-        print( "                  % s         % s         % s                  " % (p[48],p[50],p[52]) )
-        print( "" )
+        printv( "" ) 
+        printv( "                  % s         % s         % s                  " % (p[1],p[3],p[5]) )
+        printv( "            % s         % s         % s         % s            " % (p[0],p[2],p[4],p[6]) )
+        printv( "                                                               " )
+        printv( "                  % s         % s         % s                  " % (h[0],h[1],h[2]) )
+        printv( "                                                               " )
+        printv( "            % s         % s         % s         % s            " % (p[8],p[10],p[12],p[14]) )
+        printv( "      % s         % s         % s         % s         % s      " % (p[7],p[9],p[11],p[13],p[15]) )
+        printv( "                                                               " )
+        printv( "            % s         % s         % s         % s            " % (h[3],h[4],h[5],h[6]) )
+        printv( "                                                               " )
+        printv( "      % s         % s         % s         % s         % s      " % (p[17],p[19],p[21],p[23],p[25]) )
+        printv( "% s         % s         % s         % s         % s         % s" % (p[16],p[18],p[20],p[22],p[24],p[26]) )
+        printv( "                                                               " )
+        printv( "      % s         % s         % s         % s         % s      " % (h[7],h[8],h[9],h[10],h[11]) )
+        printv( "                                                               " )
+        printv( "% s         % s         % s         % s         % s         % s" % (p[27],p[29],p[31],p[33],p[35],p[37]) )
+        printv( "      % s         % s         % s         % s         % s      " % (p[28],p[30],p[32],p[34],p[36]) )
+        printv( "                                                               " )
+        printv( "            % s         % s         % s         % s            " % (h[12],h[13],h[14],h[15]) )
+        printv( "                                                               " )
+        printv( "      % s         % s         % s         % s         % s      " % (p[38],p[40],p[42],p[44],p[46]) )
+        printv( "            % s         % s         % s         % s            " % (p[39],p[41],p[43],p[45]) )
+        printv( "                                                               " )
+        printv( "                  % s         % s         % s                  " % (h[16],h[17],h[18]) )
+        printv( "                                                               " )
+        printv( "            % s         % s         % s         % s            " % (p[47],p[49],p[51],p[53]) )
+        printv( "                  % s         % s         % s                  " % (p[48],p[50],p[52]) )
+        printv( "" )

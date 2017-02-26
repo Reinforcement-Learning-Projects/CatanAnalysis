@@ -1,3 +1,5 @@
+from settings import printv
+
 from Setup import Setup
 from Discard import Discard
 from Rob import Rob
@@ -6,7 +8,6 @@ from Build import Build
 
 # Algorithms for each phase
 class Strategy:
-
     Setup = None
         # 'random' - randomly places initial settlements and roads
     Discard = None
@@ -18,12 +19,12 @@ class Strategy:
     Build = None
         # 'best' - builds something that leaves the players total points highest
 
-    def __init__( self, setup='random', discard='random', rob='random', trade='none', build='best' ):
-        self.Setup = Setup( setup )
-        self.Discard = Discard( discard )
-        self.Rob = Rob( rob )
-        self.Trade = Trade( trade )
-        self.Build = Build( build )
+    def __init__( self, playerId, board, players, setup='random', discard='random', rob='random', trade='none', build='best' ):
+        self.Setup = Setup( setup, playerId, board, players )
+        self.Discard = Discard( discard, playerId, board, players )
+        self.Rob = Rob( rob, playerId, board, players )
+        self.Trade = Trade( trade, playerId, board, players )
+        self.Build = Build( build, playerId, board, players )
 
     def play( self, do ):
         do = do.lower()

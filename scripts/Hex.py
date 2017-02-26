@@ -1,5 +1,7 @@
 # A Catan hex tile
 # number is 7 when resouce is 'desert'
+from settings import printv
+
 class Hex:
     resource = None
     number = None

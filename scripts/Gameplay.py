@@ -1,3 +1,4 @@
+from settings import printv
 
 from Player import Player
 from Phases import Phases
@@ -19,10 +20,10 @@ class Gameplay:
         if len( self.players ) in (3, 4):
             self.begin()
         else:
-            print( 'Game Not Started: You need either 3 or 4 players to play.')   
+            printv( 'Game Not Started: You need either 3 or 4 players to play.')   
 
     def __addPlayer( self, id ):
-        self.players.append( Player( id ) )
+        self.players.append( Player( id, self.Board, self.players ) )
     
     def begin( self ):
         self.Phases = Phases( self.players, self.Board )
