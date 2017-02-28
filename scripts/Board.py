@@ -18,6 +18,7 @@ class Board:
                 # 'desert' ] desert is added specially later
     numbers = None
     hexes = None
+    robberHexI = None
     positions = None
 
     def __init__( self ):
@@ -26,11 +27,17 @@ class Board:
 
         self.hexes = self.__makeHexes()
         self.positions = self.__makePositions( self.hexes )
+        self.__linkHexesBackToPositions()
         self.__addHarbors()
         self.__connectPositions()
 
+    def moveRobberTo( self, hexI ):
+        self.hexes[self.robberHexI].removeRobber()
+        self.hexes[hexI].placeRobber()
+        self.robberHexI = hexI
+
     # The order of the hexes list signifies the placement of the hexes too:
-    # With a flat side facing you: 0 = top left and 18 bottom right (much like reading)
+    # With a flat side (of the board) facing you: 0 = top left and 18 bottom right (much like reading)
     # such that the numbers of tiles in each row in order is: 3, 4, 5, 4, 3
     def __makeHexes( self ):
         hexes = [];
@@ -39,6 +46,7 @@ class Board:
             number = self.numbers.pop()
             if number is 7:
                 resource = 'desert'
+                self.robberHexI = len( hexes )
             else:
                 resource = self.resources.pop()  
 
@@ -175,6 +183,11 @@ class Board:
         positions.append( Position([ hexes[18] ]) ) #7
 
         return positions
+
+    def __linkHexesBackToPositions( self ):
+        for pos in self.positions:
+            for hex in pos.hexes:
+                hex.pushPos( pos )
 
     # adds harbors based on the 6 default ocean pieces
     def __addHarbors( self ):

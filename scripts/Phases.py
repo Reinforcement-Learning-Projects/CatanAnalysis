@@ -43,6 +43,9 @@ class Phases:
             whoseTurn = ( whoseTurn + 1 ) % len(self.players)
             self.fakeTurnLimitCount += 1
         
+        printv( '' )
+        printv( '=======Final========' )
+        self.Board.drawIt()
         self.allShowCards()
 
     def turn( self, i ):
@@ -77,9 +80,10 @@ class Phases:
         for pos in self.Board.positions:
             for hex in pos.hexes:
                 if hex.number == roll:
-                    if pos.playerId is not None:
-                        printv( str(pos.playerId) + ' is getting ' + hex.resource )
-                        self.players[ pos.playerId ].addCard( hex.resource )
+                    if hex.hasRobber == False:
+                        if pos.playerId is not None:
+                            printv( str(pos.playerId) + ' is getting ' + hex.resource )
+                            self.players[ pos.playerId ].addCard( hex.resource )
 
     def allShowCards( self ):
         for p in self.players:
